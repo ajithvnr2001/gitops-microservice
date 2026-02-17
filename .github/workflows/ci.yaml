@@ -13,8 +13,8 @@ env:
   IMAGE_NAME: auth-service
   
   # TODO: Replace with the output from your Terraform 'iam.tf'
-  WORKLOAD_IDENTITY_PROVIDER: "projects/123456789/locations/global/workloadIdentityPools/..."
-  SERVICE_ACCOUNT_EMAIL: "github-actions-sa@..."
+  WORKLOAD_IDENTITY_PROVIDER: "projects/747917945327/locations/global/workloadIdentityPools/github-pool-3/providers/github-provider"
+  SERVICE_ACCOUNT_EMAIL: "github-actions-sa@youtube-292903.iam.gserviceaccount.com"
 
 jobs:
   build-and-push:

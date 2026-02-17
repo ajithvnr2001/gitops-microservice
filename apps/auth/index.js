@@ -5,7 +5,7 @@ const port = process.env.PORT || 3000;
 app.get('/', (req, res) => {
   res.send('Auth Service v1.0');
 });
-
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'healthy' });
 });

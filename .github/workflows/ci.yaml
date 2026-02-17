@@ -1,27 +1,35 @@
 name: CI - Build and Push
+
 on:
   push:
     branches: [ "main" ]
     paths:
-      - 'app/**'
+      - 'apps/**' # Only run if app code changes
+
 env:
-  PROJECT_ID: youtube-292903
+  PROJECT_ID: youtube-292903 # Your Project ID
   REGION: us-central1
   REPO_NAME: gitops-repo
   IMAGE_NAME: auth-service
-  WORKLOAD_IDENTITY_PROVIDER: "projects/747917945327/locations/global/workloadIdentityPools/github-pool-3/providers/github-provider"
-  SERVICE_ACCOUNT_EMAIL: "github-actions-sa@youtube-292903.iam.gserviceaccount.com"
+  
+  # TODO: Replace with the output from your Terraform 'iam.tf'
+  WORKLOAD_IDENTITY_PROVIDER: "projects/123456789/locations/global/workloadIdentityPools/..."
+  SERVICE_ACCOUNT_EMAIL: "github-actions-sa@..."
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
+    
+    # IMPORTANT: This permission is required for Workload Identity Federation
     permissions:
       contents: read
       id-token: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 1. Authenticate to Google Cloud using WIF (No keys needed!)
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v1

@@ -15,5 +15,5 @@ app.get('/login', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Auth service listening on the  port ${port}`);
+  console.log(`Auth service listening on  port ${port}`);
 });

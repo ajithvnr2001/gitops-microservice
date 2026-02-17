@@ -1,0 +1,44 @@
+name: CI - Build and Push
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'app/**'
+env:
+  PROJECT_ID: youtube-292903
+  REGION: us-central1
+  REPO_NAME: gitops-repo
+  IMAGE_NAME: auth-service
+  WORKLOAD_IDENTITY_PROVIDER: "projects/747917945327/locations/global/workloadIdentityPools/github-pool-3/providers/github-provider"
+  SERVICE_ACCOUNT_EMAIL: "github-actions-sa@youtube-292903.iam.gserviceaccount.com"
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT_EMAIL }}
+
+      # 2. Configure Docker to use Google Cloud credentials
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      # 3. Build the Docker Image
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ./apps/auth
+
+      # 4. Push the Docker Image
+      - name: Push Docker Image
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

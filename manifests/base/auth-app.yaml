@@ -1,12 +1,12 @@
-apiversion: v1
-kind: Service
+apiVersion: apps/v1      # ✅ Deployment needs apps/v1
+kind: Deployment
 metadata:
   name: auth-deployment
   namespace: default
 spec:
   replicas: 2
   selector:
-    matchlabels:
+    matchLabels:         # ✅ camelCase
       app: auth
   template:
     metadata:
@@ -18,8 +18,15 @@ spec:
           image: us-central1-docker.pkg.dev/youtube-292903/gitops-repo/auth-service:latest
           ports:
             - containerPort: 3000
+          resources:     # ✅ resources inside container spec
+            requests:
+              cpu: "250m"
+              memory: "512Mi"   # ✅ capital Mi
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
 ---
-apiversion: v1
+apiVersion: v1           # ✅ Service uses v1 (not apps/v1)
 kind: Service
 metadata:
   name: auth-service
@@ -32,10 +39,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
-  resources:
-    limits:
-      cpu: "250m"
-      memory: "512mi"
-    requests:
-      cpu: "500m"
-      memory: "1Gi"

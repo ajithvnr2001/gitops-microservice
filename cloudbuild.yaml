@@ -1,0 +1,48 @@
+substitutions:
+  _IMAGE: us-central1-docker.pkg.dev/youtube-292903/gitops-repo/auth-service
+  _MANIFEST: manifests/base/auth-app.yaml
+  _GIT_REPO: github.com/ajithvnr2001/gitops-microservice.git
+
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build'
+    args:
+      - 'build'
+      - '-t'
+      - '${_IMAGE}:${SHORT_SHA}'
+      - '-t'
+      - '${_IMAGE}:latest'
+      - './auth-service'
+
+  # Push both tags
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push'
+    args: ['push', '--all-tags', '${_IMAGE}']
+    waitFor: ['build']
+
+  # Update image tag in Git manifest and push
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'update-manifest'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        git clone https://$$GITHUB_TOKEN@${_GIT_REPO} repo
+        cd repo
+        sed -i "s|${_IMAGE}:.*|${_IMAGE}:${SHORT_SHA}|g" ${_MANIFEST}
+        git config user.email "cloudbuild@youtube-292903.iam.gserviceaccount.com"
+        git config user.name "Cloud Build Bot"
+        git add ${_MANIFEST}
+        git diff --cached --quiet || git commit -m "ci: update auth-service to ${SHORT_SHA} [skip ci]"
+        git push
+    secretEnv: ['GITHUB_TOKEN']
+    waitFor: ['push']
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/youtube-292903/secrets/github-token/versions/latest
+      env: 'GITHUB_TOKEN'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

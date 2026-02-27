@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 // Mock authentication endpoint
 app.get('/', (req, res) => {
-  res.send('Auth Service v1.0');
+  res.send('Auth Service v2.0');
 });
 // Health check endpoint
 app.get('/health', (req, res) => {

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: auth-container
-          image: us-central1-docker.pkg.dev/youtube-292903/gitops-repo/auth-service:53a9276
+          image: us-central1-docker.pkg.dev/youtube-292903/gitops-repo/auth-service:64500ac
           imagePullPolicy: Always
           env:
             - name: APP_VERSION

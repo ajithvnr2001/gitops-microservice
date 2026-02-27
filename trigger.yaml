@@ -1,0 +1,12 @@
+name: auth-service-ci
+description: Build and deploy auth-service on push to main
+filename: cloudbuild.yaml
+includedFiles:
+  - apps/auth/**
+sourceToBuild:
+  repository: projects/youtube-292903/locations/us-central1/connections/ajithvnr2001-github/repositories/gitops-microservice
+  ref: refs/heads/main
+  repoType: GITHUB
+triggerTemplate:
+  repoName: gitops-microservice
+  branchName: main

@@ -16,6 +16,10 @@ spec:
       containers:
         - name: auth-container
           image: us-central1-docker.pkg.dev/youtube-292903/gitops-repo/auth-service:latest
+          imagePullPolicy: Always
+          env:
+            - name: APP_VERSION
+              value: "v2.0"
           ports:
             - containerPort: 3000
           resources:     # ✅ resources inside container spec

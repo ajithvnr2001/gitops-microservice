@@ -13,7 +13,7 @@ steps:
       - '${_IMAGE}:${SHORT_SHA}'
       - '-t'
       - '${_IMAGE}:latest'
-      - './auth-service'
+      - './apps/auth'
 
   # Push both tags
   - name: 'gcr.io/cloud-builders/docker'
